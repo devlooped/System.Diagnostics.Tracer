@@ -3,12 +3,13 @@
   <metadata>
     <id>System.Diagnostics.Tracer</id>
     <version>0.1.0</version>
-    <title>System.Diagnostics.Tracer: An improved API on top of System.Diagnostics</title>
+    <title>System.Diagnostics.Tracer</title>
     <authors>kzu</authors>
     <owners>kzu</owners>
     <licenseUrl>https://github.com/kzu/System.Diagnostics.Tracer/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/kzu/System.Diagnostics.Tracer</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>An improved API on top of System.Diagnostics</summary>
     <description>Adds support for dynamic runtime configuration of trace sources, hierarchical trace sources and testability.
     
 Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();</description>
