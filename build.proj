@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IntermediateOutputPath>build\</IntermediateOutputPath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+  </PropertyGroup>
+	
+    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+		<NuGetPath>$(MSBuildThisFileDirectory).nuget</NuGetPath>
+		<NuGet>$(NuGetPath)\NuGet.exe</NuGet>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+		<NuGet>nuget</NuGet>
+	</PropertyGroup>
+
+	<Target Name="Build" DependsOnTargets="GitVersion">
+		<PropertyGroup>
+			<Version>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)</Version>
+			<Args>-Version $(Version) -NoPackageAnalysis -NonInteractive -OutputDirectory out</Args>
+		</PropertyGroup>
+
+		<MakeDir Directories="out" Condition="!Exists('out')" />
+
+    <MSBuild Projects="src\System.Diagnostics.Tracer.sln" Properties="Configuration=$(Configuration)" />
+		<Exec Command='"$(NuGet)" Pack "src\System.Diagnostics.Tracer.nuspec"  $(Args)' />
+	</Target>
+
+	<Import Project="build\packages\GitInfo\build\GitInfo.targets" />
+	
+</Project>
