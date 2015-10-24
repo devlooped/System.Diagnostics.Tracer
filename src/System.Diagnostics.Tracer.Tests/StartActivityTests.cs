@@ -138,8 +138,9 @@ namespace System.Diagnostics
 				}
 			}
 
+			Tracer.Configuration.RemoveListener ("Foo", listener);
 			listener.Flush ();
-			listener.Close ();
+			listener.Dispose ();
 
 			using (var reader = XmlReader.Create (xml, new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment })) {
 				Assert.Equal (XmlNodeType.Element, reader.MoveToContent ());
