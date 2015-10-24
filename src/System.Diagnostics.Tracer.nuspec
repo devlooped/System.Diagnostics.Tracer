@@ -21,6 +21,6 @@ Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();</descriptio
     <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.dll" target="lib\net40" />
     <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.pdb" target="lib\net40" />
     <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.xml" target="lib\net40" />
-    <file src="..\README.txt" />
+    <file src="..\README.md" target="readme.txt" />
   </files>
 </package>

@@ -67,9 +67,9 @@ namespace System.Diagnostics
                 var genericName = type.GetGenericTypeDefinition().FullName;
 
                 return genericName.Substring(0, genericName.IndexOf('`')) +
-                    "<" +
+                    "{" +
                     string.Join(",", type.GetGenericArguments().Select(t => NameFor(t)).ToArray()) +
-                    ">";
+                    "}";
             }
 
             return type.FullName;

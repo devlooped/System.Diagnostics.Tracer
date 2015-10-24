@@ -186,6 +186,6 @@ namespace System.Diagnostics
             tracer.Trace(TraceEventType.Verbose, exception, format, args);
         }
 
-        #endregion
-    }
+		#endregion
+	}
 }
