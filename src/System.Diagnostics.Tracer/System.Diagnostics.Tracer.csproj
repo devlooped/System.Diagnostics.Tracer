@@ -77,4 +77,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GitInfo.1.0.49-pre\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.1.0.49-pre\build\GitInfo.targets'))" />
   </Target>
+  <Target Name="AfterBuild" Inputs="..\..\README.md" Outputs="$(OutputPath)readme.txt">
+    <Copy SourceFiles="..\..\README.md" DestinationFiles="$(OutputPath)readme.txt" />
+    <ItemGroup>
+      <FileWrites Include="$(OutputPath)readme.txt" />
+    </ItemGroup>
+  </Target>
 </Project>
