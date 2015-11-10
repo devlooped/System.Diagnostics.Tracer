@@ -23,7 +23,7 @@
 
 		<MakeDir Directories="out" Condition="!Exists('out')" />
 
-    <MSBuild Projects="src\System.Diagnostics.Tracer.sln" Properties="Configuration=$(Configuration)" />
+		<MSBuild Projects="src\System.Diagnostics.Tracer.sln" Properties="Configuration=$(Configuration)" />
 		<Exec Command='"$(NuGet)" Pack "src\System.Diagnostics.Tracer.nuspec"  $(Args)' />
 	</Target>
 

@@ -14,7 +14,7 @@
 Adds support for dynamic runtime configuration of trace sources, hierarchical trace sources and testability.
     
 Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();</description>
-    <copyright>© Daniel Cazzulino.</copyright>
+    <copyright>2015 © Daniel Cazzulino</copyright>
     <tags>tracing logging system.diagnostics</tags>
   </metadata>
   <files>
@@ -22,5 +22,13 @@ Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();</descriptio
     <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.pdb" target="lib\net40" />
     <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.xml" target="lib\net40" />
     <file src="System.Diagnostics.Tracer\bin\readme.txt" />
+    <file src="*.targets" target="src" />
+    <file src="*.sln" target="src" />
+    <file src="*.snk" target="src" />
+    <file src="**\*.cs" target="src" exclude="**\bin\**\*.cs;**\obj\**\*.cs" />
+    <file src="**\*.csproj" target="src" />
+    <file src="**\*.nuspec" target="src" />
+    <file src="**\*.config" target="src" />
+    <file src="**\*.resx" target="src" />
   </files>
 </package>

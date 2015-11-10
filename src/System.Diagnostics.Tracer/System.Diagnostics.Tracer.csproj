@@ -77,7 +77,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GitInfo.1.0.49-pre\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.1.0.49-pre\build\GitInfo.targets'))" />
   </Target>
-  <Target Name="AfterBuild" Inputs="..\..\README.md" Outputs="$(OutputPath)readme.txt">
+  <!-- The README.md file won't exist if we're inside the /src folder inside the nuget package itself. -->
+  <Target Name="AfterBuild" Inputs="..\..\README.md" Outputs="$(OutputPath)readme.txt" Condition=" Exists('..\..\README.md') ">
     <Copy SourceFiles="..\..\README.md" DestinationFiles="$(OutputPath)readme.txt" />
     <ItemGroup>
       <FileWrites Include="$(OutputPath)readme.txt" />
