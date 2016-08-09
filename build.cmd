@@ -18,7 +18,7 @@ md .nuget
 copy %CACHED_NUGET% .nuget\nuget.exe > nul
 
 :restore
-.nuget\NuGet.exe install src\System.Diagnostics.Tracer\packages.config -OutputDirectory build\packages -ExcludeVersion
+.nuget\NuGet.exe install packages.config -OutputDirectory .nuget\packages -ExcludeVersion
 
 :run
 msbuild build.proj /v:detailed %1 %2 %3 %4 %5 %6 %7 %8 %9
