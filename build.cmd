@@ -1,24 +1,39 @@
-@echo off
-rem Only need to run this the first time after clone. Subsequent builds can be just "msbuild".
-rem Alternatively, this batch file can be invoked passing msbuild parameters, like: build.cmd /v:detailed /t:Rebuild
+:: Optional batch file to quickly build with some defaults.
+:: Alternatively, this batch file can be invoked passing msbuild parameters, like: build.cmd "/v:detailed" "/t:Rebuild"
 
-cd %~dp0
+@ECHO OFF
 
-SETLOCAL
-SET CACHED_NUGET=%LocalAppData%\NuGet\NuGet.exe
+:: Ensure MSBuild can be located. Allows for a better error message below.
+where msbuild > %TEMP%\msbuild.txt
+set /p msb=<%TEMP%\msbuild.txt
 
-IF EXIST %CACHED_NUGET% goto copynuget
-echo Downloading latest version of NuGet.exe...
-IF NOT EXIST %LocalAppData%\NuGet md %LocalAppData%\NuGet
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'https://www.nuget.org/nuget.exe' -OutFile '%CACHED_NUGET%'"
+IF "%msb%"=="" (
+    echo Please run %~n0 from a Visual Studio Developer Command Prompt.
+    exit /b -1
+)
 
-:copynuget
+SETLOCAL ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
+PUSHD "%~dp0" >NUL
+
 IF EXIST .nuget\nuget.exe goto restore
-md .nuget
-copy %CACHED_NUGET% .nuget\nuget.exe > nul
+IF NOT EXIST .nuget md .nuget
+echo Downloading latest version of NuGet.exe...
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' -OutFile .nuget/nuget.exe"
 
 :restore
-.nuget\NuGet.exe install packages.config -OutputDirectory .nuget\packages -ExcludeVersion
+:: Build script packages have no version in the path, so we install them to .nuget\packages to avoid conflicts with 
+:: solution/project packages.
+IF NOT EXIST packages.config goto run
+.nuget\nuget.exe install packages.config -OutputDirectory .nuget\packages -ExcludeVersion -Verbosity quiet
 
 :run
-msbuild build.proj /v:detailed %1 %2 %3 %4 %5 %6 %7 %8 %9
+IF "%Verbosity%"=="" (
+    set Verbosity=minimal
+)
+
+ECHO ON
+"%msb%" build.proj /v:%Verbosity% /nr:true /m %1 %2 %3 %4 %5 %6 %7 %8 %9
+@ECHO OFF
+
+POPD >NUL
+ENDLOCAL
