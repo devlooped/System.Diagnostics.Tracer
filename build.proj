@@ -20,7 +20,6 @@
 		<Exec Command="$(PackagesPath)\gitlink\lib\net45\GitLink.exe . -f src\System.Diagnostics.Tracer.sln -u https://github.com/kzu/System.Diagnostics.Tracer -b &quot;$(GitBranch)&quot; -c &quot;$(Configuration)&quot;" 
 			  StandardOutputImportance="low" />
 
-		<WriteLinesToFile File="src\System.Diagnostics.Tracer\bin\GitInfo.txt" Lines="$(Version)" Overwrite="true" />
 		<Exec Command='"$(NuGet)" Pack "src\System.Diagnostics.Tracer.nuspec" $(Args)' />
 	</Target>
 

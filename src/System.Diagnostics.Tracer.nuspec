@@ -16,20 +16,24 @@ Adds support for dynamic runtime configuration of trace sources, hierarchical tr
 Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();</description>
     <copyright>2015 © Daniel Cazzulino</copyright>
     <tags>tracing logging system.diagnostics</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5" />
+      <group targetFramework=".NETStandard1.3">
+        <dependency id="System.Diagnostics.TraceSource" version="4.0.0" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+    </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.dll" target="lib\net40" />
-    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.pdb" target="lib\net40" />
-    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.xml" target="lib\net40" />
+    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.dll" target="lib\netstandard1.3" />
+    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.pdb" target="lib\netstandard1.3" />
+    <file src="System.Diagnostics.Tracer\bin\System.Diagnostics.Tracer.xml" target="lib\netstandard1.3" />
+    <file src="System.Diagnostics.Tracer.Desktop\bin\System.Diagnostics.Tracer.dll" target="lib\net45" />
+    <file src="System.Diagnostics.Tracer.Desktop\bin\System.Diagnostics.Tracer.pdb" target="lib\net45" />
+    <file src="System.Diagnostics.Tracer.Desktop\bin\System.Diagnostics.Tracer.xml" target="lib\net45" />
     <file src="System.Diagnostics.Tracer\bin\readme.txt" />
-    <file src="System.Diagnostics.Tracer\bin\GitInfo.txt" target="src" />
-    <file src="*.targets" target="src" />
-    <file src="*.sln" target="src" />
-    <file src="*.snk" target="src" />
-    <file src="**\*.cs" target="src" exclude="**\bin\**\*.cs;**\obj\**\*.cs" />
-    <file src="**\*.csproj" target="src" />
-    <file src="**\*.nuspec" target="src" />
-    <file src="**\*.config" target="src" />
-    <file src="**\*.resx" target="src" />
   </files>
 </package>

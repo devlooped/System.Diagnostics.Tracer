@@ -1,10 +1,14 @@
 .nuget
 out
-build
 bin
 obj
 packages
+*.nuget.targets
+*.nuget.props
+*.lock.json
 *.suo
 *.user
+*.cache
 .vs
 .*
+log.txt

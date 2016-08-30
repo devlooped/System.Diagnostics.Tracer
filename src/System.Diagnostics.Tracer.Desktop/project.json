@@ -1,0 +1,12 @@
+﻿{
+  "dependencies": {
+    "GitInfo": "1.1.28",
+    "IFluentInterface": "2.0.1"
+  },
+  "frameworks": {
+    "net45": {}
+  },
+  "runtimes": {
+    "win": {}
+  }
+}

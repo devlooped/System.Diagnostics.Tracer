@@ -10,6 +10,6 @@ namespace System.Diagnostics
 		/// <summary>
 		/// Gets a tracer instance with the specified name.
 		/// </summary>
-		ITracer Get (string name);
+		ITracer Get(string name);
 	}
 }
