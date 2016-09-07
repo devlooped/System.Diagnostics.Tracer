@@ -7,7 +7,7 @@ namespace System.Diagnostics
 	class TracerManager : ITracerManager, ITracerConfiguration
 	{
 		const string globalSourceName = "*";
-		static readonly TraceSource globalSource = new TraceSource(globalSourceName);
+		static readonly TraceSource globalSource;
 
 		// If we can grab this from reflection from the TraceSource, we do it,
 		// and it means we can also manipulate the configuration for built-in
@@ -27,6 +27,8 @@ namespace System.Diagnostics
 				}
 				catch { }
 			}
+
+			globalSource = CreateSource(globalSourceName);
 		}
 
 		public ITracer Get(string name)
@@ -61,10 +63,12 @@ namespace System.Diagnostics
 			GetOrAdd(sourceName, name => CreateSource(name)).Switch.Level = level;
 		}
 
-		TraceSource CreateSource(string name)
+		static TraceSource CreateSource(string name)
 		{
 			var source = new TraceSource(name);
-			source.TraceInformation("Initialized trace source {0} with initial level {1}", name, source.Switch.Level);
+			// The source.Listeners.Count call causes the tracer to be initialized from config at this point.
+			source.TraceInformation("Initialized trace source {0} with initial level {1} and {2} initial listeners.", name, source.Switch.Level, source.Listeners.Count);
+			
 			return source;
 		}
 
