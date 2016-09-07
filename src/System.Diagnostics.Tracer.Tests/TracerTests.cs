@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -36,11 +37,13 @@ namespace System.Diagnostics
             var inMemoryListener = new InMemoryTraceListener();
             var xmlListener = new XmlWriterTraceListener(xml);
 
-            Tracer.Configuration.AddListener("Foo", inMemoryListener);
-            Tracer.Configuration.AddListener("Foo", xmlListener);
-            Tracer.Configuration.SetTracingLevel("Foo", SourceLevels.All);
+			var tracerName = MethodBase.GetCurrentMethod().Name;
 
-            var tracer = Tracer.Get("Foo");
+			Tracer.Configuration.AddListener(tracerName, inMemoryListener);
+            Tracer.Configuration.AddListener(tracerName, xmlListener);
+            Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
+
+            var tracer = Tracer.Get(tracerName);
 
             tracer.Error(new ApplicationException("Foo Error"), "A Foo Exception occurred");
 

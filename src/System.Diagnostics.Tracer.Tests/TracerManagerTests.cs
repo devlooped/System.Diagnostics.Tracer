@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Reflection;
+using Moq;
 using Xunit;
 
 namespace System.Diagnostics
@@ -47,16 +48,17 @@ namespace System.Diagnostics
 			var listener = new Mock<TraceListener>();
 			var manager = new TracerManager();
 
-			var tracer = manager.Get("Foo");
+			var tracerName = MethodBase.GetCurrentMethod().Name;
+			var tracer = manager.Get(tracerName);
 
-			manager.SetTracingLevel ("Foo", SourceLevels.Information);
-			manager.AddListener ("Foo", listener.Object);
+			manager.SetTracingLevel (tracerName, SourceLevels.Information);
+			manager.AddListener (tracerName, listener.Object);
 
 			tracer.Info ("Hi");
-			manager.RemoveListener ("Foo", listener.Object);
+			manager.RemoveListener (tracerName, listener.Object);
 			tracer.Info ("Hi");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once());
 		}
 
 		[Fact]
@@ -66,16 +68,17 @@ namespace System.Diagnostics
 			listener.Setup (x => x.Name).Returns ("FooListener");
 			var manager = new TracerManager();
 
-			var tracer = manager.Get("Foo");
+			var tracerName = MethodBase.GetCurrentMethod().Name;
+			var tracer = manager.Get(tracerName);
 
-			manager.SetTracingLevel ("Foo", SourceLevels.Information);
-			manager.AddListener ("Foo", listener.Object);
+			manager.SetTracingLevel (tracerName, SourceLevels.Information);
+			manager.AddListener (tracerName, listener.Object);
 
 			tracer.Info ("Hi");
-			manager.RemoveListener ("Foo", "FooListener");
+			manager.RemoveListener (tracerName, "FooListener");
             tracer.Info ("Hi");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once ());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once ());
 		}
 
 		[Fact]
@@ -84,15 +87,16 @@ namespace System.Diagnostics
 			var listener = new Mock<TraceListener>();
 			var manager = new TracerManager();
 
-			var tracer = manager.Get("Foo");
+			var tracerName = MethodBase.GetCurrentMethod().Name;
+			var tracer = manager.Get(tracerName);
 
-			manager.SetTracingLevel ("Foo", SourceLevels.Warning);
-			manager.AddListener ("Foo", listener.Object);
+			manager.SetTracingLevel (tracerName, SourceLevels.Warning);
+			manager.AddListener (tracerName, listener.Object);
 
 			tracer.Info ("Hi");
 			tracer.Verbose ("Bye");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Never ());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Never ());
 		}
 
 		[Fact]
@@ -101,14 +105,15 @@ namespace System.Diagnostics
 			var listener = new Mock<TraceListener>();
 			var manager = new TracerManager();
 
-			var tracer = manager.Get("Foo");
+			var tracerName = MethodBase.GetCurrentMethod().Name;
+			var tracer = manager.Get(tracerName);
 
-			manager.SetTracingLevel ("Foo", SourceLevels.All);
-			manager.AddListener ("Foo", listener.Object);
+			manager.SetTracingLevel (tracerName, SourceLevels.All);
+			manager.AddListener (tracerName, listener.Object);
 
 			tracer.Trace (TraceEventType.Suspend, "Suspend");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo", TraceEventType.Suspend, It.IsAny<int> (), "Suspend", It.IsAny<object[]> ()), Times.Once());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Suspend, It.IsAny<int> (), "Suspend", It.IsAny<object[]> ()), Times.Once());
 		}
 
 		[Fact]

@@ -115,8 +115,8 @@ namespace System.Diagnostics
 		[Fact]
 		public void when_activity_has_exception_then_traces_data ()
 		{
-			var xml = Path.GetTempFileName();
-			var listener = new XmlWriterTraceListener(xml);
+			var xmlFile = Path.GetTempFileName();
+			var listener = new XmlWriterTraceListener(xmlFile);
 
 			Tracer.Configuration.AddListener ("Foo", listener);
 			Tracer.Configuration.SetTracingLevel ("Foo", SourceLevels.All);
@@ -142,15 +142,22 @@ namespace System.Diagnostics
 			listener.Flush ();
 			listener.Dispose ();
 
-			using (var reader = XmlReader.Create (xml, new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment })) {
+			var xmlns = XNamespace.Get("http://schemas.microsoft.com/2004/10/E2ETraceEvent/TraceRecord");
+			var commitFound = false;
+
+			using (var reader = XmlReader.Create (xmlFile, new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment })) {
 				Assert.Equal (XmlNodeType.Element, reader.MoveToContent ());
-				while (reader.Read()) {
-					if (reader.NodeType == XmlNodeType.Element && reader.NamespaceURI == "http://schemas.microsoft.com/2004/10/E2ETraceEvent/TraceRecord") {
-						Assert.True (reader.ReadToDescendant ("Commit", "http://schemas.microsoft.com/2004/10/E2ETraceEvent/TraceRecord"));
-						Assert.Equal ("1ab314b", reader.ReadElementContentAsString ());
+				do {
+					var xml = reader.ReadOuterXml();
+					var doc = XDocument.Load(new StringReader(xml));
+					var record = doc.Descendants(xmlns + "TraceRecord").FirstOrDefault();
+					if (record != null && record.Attribute("Severity") != null && record.Attribute("Severity").Value == "Error") {
+						commitFound = record.Element(xmlns + "DataItems")?.Element(xmlns + "Commit")?.Value == "1ab314b";
 					}
-				}
+				} while (!commitFound && !reader.EOF);
 			}
+
+			Assert.True(commitFound, "Failed to find traced commit ID exception data.");
 
 			//Process.Start ("notepad", xml);
 
