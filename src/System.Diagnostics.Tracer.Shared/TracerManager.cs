@@ -114,6 +114,7 @@ namespace System.Diagnostics
 				return globalSource;
 
 			var cachedSource = traceSourceCache
+				.ToArray()
 				.Where(weak => weak.IsAlive)
 				.Select(weak => (TraceSource)weak.Target)
 				.FirstOrDefault(source => source != null && source.Name == sourceName);
