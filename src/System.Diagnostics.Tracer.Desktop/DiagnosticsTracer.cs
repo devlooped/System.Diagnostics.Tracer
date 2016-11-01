@@ -42,7 +42,10 @@ namespace System.Diagnostics
             {
                 using (new SourceNameReplacer(source, sourceName))
                 {
-                    source.TraceEvent(type, 0, format, args);
+					if (args != null && args.Length > 0)
+						source.TraceEvent(type, 0, format, args);
+					else
+						source.TraceEvent(type, 0, format);
                 }
             }
         }
@@ -81,7 +84,7 @@ namespace System.Diagnostics
                             }
                         }
 
-                        source.TraceEvent(type, 0, string.Format(format, args) + Environment.NewLine + exception);
+                        source.TraceEvent(type, 0, message + Environment.NewLine + exception);
                     }
                     finally
                     {
