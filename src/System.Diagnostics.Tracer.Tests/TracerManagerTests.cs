@@ -37,9 +37,9 @@ namespace System.Diagnostics
 
 			tracer.Trace (TraceEventType.Information, "Hi");
 
-			globalListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()));
-			fooListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()));
-			barListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()));
+			globalListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi"));
+			fooListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi"));
+			barListener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), "Foo.Bar", TraceEventType.Information, It.IsAny<int> (), "Hi"));
 		}
 
 		[Fact]
@@ -58,7 +58,7 @@ namespace System.Diagnostics
 			manager.RemoveListener (tracerName, listener.Object);
 			tracer.Info ("Hi");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi"), Times.Once());
 		}
 
 		[Fact]
@@ -78,7 +78,7 @@ namespace System.Diagnostics
 			manager.RemoveListener (tracerName, "FooListener");
             tracer.Info ("Hi");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi", It.IsAny<object[]> ()), Times.Once ());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Information, It.IsAny<int> (), "Hi"), Times.Once ());
 		}
 
 		[Fact]
@@ -113,7 +113,7 @@ namespace System.Diagnostics
 
 			tracer.Trace (TraceEventType.Suspend, "Suspend");
 
-			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Suspend, It.IsAny<int> (), "Suspend", It.IsAny<object[]> ()), Times.Once());
+			listener.Verify (x => x.TraceEvent (It.IsAny<TraceEventCache> (), tracerName, TraceEventType.Suspend, It.IsAny<int> (), "Suspend"), Times.Once());
 		}
 
 		[Fact]

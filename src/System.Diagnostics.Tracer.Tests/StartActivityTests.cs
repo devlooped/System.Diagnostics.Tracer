@@ -47,16 +47,14 @@ namespace System.Diagnostics
 				"Foo",
 				TraceEventType.Start,
 				It.IsAny<int> (),
-				It.IsAny<string>(),
-				It.IsAny<object[]> ()));
+				It.IsAny<string>()));
 
 			listener.Verify (x => x.TraceEvent (
 				It.IsAny<TraceEventCache> (),
 				"Foo",
 				TraceEventType.Stop,
 				It.IsAny<int> (),
-				It.IsAny<string> (),
-				It.IsAny<object[]> ()));
+				It.IsAny<string> ()));
 
 			listener.Verify (x => x.TraceTransfer (
 				It.IsAny<TraceEventCache> (),
@@ -92,16 +90,14 @@ namespace System.Diagnostics
 				"Foo",
 				TraceEventType.Start,
 				It.IsAny<int> (),
-				It.IsAny<string> (),
-				It.IsAny<object[]> ()));
+				It.IsAny<string>()));
 
 			listener.Verify (x => x.TraceEvent (
 				It.IsAny<TraceEventCache> (),
 				"Foo",
 				TraceEventType.Stop,
 				It.IsAny<int> (),
-				It.IsAny<string> (),
-				It.IsAny<object[]> ()));
+				It.IsAny<string> ()));
 
 			listener.Verify (x => x.TraceTransfer (
 				It.IsAny<TraceEventCache> (),
