@@ -30,6 +30,14 @@ namespace System.Diagnostics
 			return disposable;
 		}
 
+		/// <summary>
+		/// Starts a new activity scope.
+		/// </summary>
+		public static IDisposable StartActivity(this ITracer tracer, string displayName, bool appendElapsedTime)
+		{
+			return disposable;
+		}
+
 		class NullDisposable : IDisposable
 		{
 			public void Dispose()
