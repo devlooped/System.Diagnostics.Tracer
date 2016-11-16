@@ -14,7 +14,7 @@ namespace System.Diagnostics
 		/// </summary>
 		public static IDisposable StartActivity(this ITracer tracer, string format, params object[] args)
 		{
-			return new TraceActivity(tracer, format, args);
+			return new TraceActivity(tracer, format, false, args);
 		}
 
 		/// <summary>
@@ -23,6 +23,14 @@ namespace System.Diagnostics
 		public static IDisposable StartActivity(this ITracer tracer, string displayName)
 		{
 			return new TraceActivity(tracer, displayName);
+		}
+
+		/// <summary>
+		/// Starts a new activity scope.
+		/// </summary>
+		public static IDisposable StartActivity(this ITracer tracer, string displayName, bool appendElapsedTime)
+		{
+			return new TraceActivity(tracer, displayName, appendElapsedTime);
 		}
 
 		/// <devdoc>
@@ -36,15 +44,18 @@ namespace System.Diagnostics
 			ITracer tracer;
 			Guid oldId;
 			Guid newId;
+			bool appendElapsedTime;
+			DateTime startTime;
 
-			public TraceActivity(ITracer tracer, string displayName)
-				: this(tracer, displayName, null)
-			{
-			}
+			public TraceActivity(ITracer tracer, string displayName, bool appendElapsedTime = false)
+				: this(tracer, displayName, appendElapsedTime, null)
+			{ }
 
-			public TraceActivity(ITracer tracer, string displayName, params object[] args)
+			public TraceActivity(ITracer tracer, string displayName, bool appendElapsedTime, params object[] args)
 			{
 				this.tracer = tracer;
+				this.appendElapsedTime = appendElapsedTime;
+
 				this.displayName = displayName;
 				if (args != null && args.Length > 0)
 					this.displayName = string.Format(displayName, args, CultureInfo.CurrentCulture);
@@ -56,6 +67,10 @@ namespace System.Diagnostics
 					tracer.Trace(TraceEventType.Transfer, newId);
 
 				Trace.CorrelationManager.ActivityId = newId;
+
+				if (appendElapsedTime)
+					startTime = DateTime.UtcNow;
+
 				tracer.Trace(TraceEventType.Start, this.displayName);
 			}
 
@@ -63,7 +78,11 @@ namespace System.Diagnostics
 			{
 				if (!disposed)
 				{
-					tracer.Trace(TraceEventType.Stop, displayName);
+					var message = displayName;
+					if (appendElapsedTime)
+						message += string.Format(" ({0} ms)", (int)DateTime.UtcNow.Subtract(startTime).TotalMilliseconds);
+
+					tracer.Trace(TraceEventType.Stop, message);
 					if (oldId != Guid.Empty)
 						tracer.Trace(TraceEventType.Transfer, oldId);
 

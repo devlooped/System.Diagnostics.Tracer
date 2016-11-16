@@ -162,5 +162,24 @@ namespace System.Diagnostics
 			//Process.Start (@"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\SvcTraceViewer.exe", xml);
 			//Process.Start (@"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\SvcTraceViewer.exe", xml);
 		}
+
+		[Fact]
+		public void when_using_activity_with_elapsed_time_then_stop_message_includes_elapsed_time()
+		{
+			var listener = new Mock<TraceListener>();
+			Tracer.Configuration.AddListener("Foo", listener.Object);
+			Tracer.Configuration.SetTracingLevel("Foo", SourceLevels.All);
+
+			var tracer = Tracer.Get("Foo");
+
+			using (var activity = tracer.StartActivity("Test", appendElapsedTime: true)) ;
+
+			listener.Verify(x => x.TraceEvent(
+			   It.IsAny<TraceEventCache>(),
+			   "Foo",
+			   TraceEventType.Stop,
+			   It.IsAny<int>(),
+			   It.Is<string>(message => message.StartsWith("Test") && message.EndsWith(" ms)"))));
+		}
 	}
 }
