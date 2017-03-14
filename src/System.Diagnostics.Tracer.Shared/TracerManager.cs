@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,7 @@ namespace System.Diagnostics
 		// and it means we can also manipulate the configuration for built-in
 		// sources instantiated natively by the BCLs throughout .NET :).
 		static List<WeakReference> traceSourceCache = new List<WeakReference>();
+		static ConcurrentDictionary<string, TraceSource> traceSources = new ConcurrentDictionary<string, TraceSource>();
 
 		public string GlobalSourceName { get { return globalSourceName; } }
 
@@ -35,32 +37,32 @@ namespace System.Diagnostics
 		{
 			return new AggregateTracer(name, CompositeFor(name)
 				.Select(tracerName => new DiagnosticsTracer(
-					this.GetOrAdd(tracerName, sourceName => CreateSource(sourceName)))));
+					GetOrAdd(tracerName))));
 		}
 
 		public TraceSource GetSource(string name)
 		{
-			return GetOrAdd(name, sourceName => CreateSource(sourceName));
+			return GetOrAdd(name);
 		}
 
 		public void AddListener(string sourceName, TraceListener listener)
 		{
-			GetOrAdd(sourceName, name => CreateSource(name)).Listeners.Add(listener);
+			GetOrAdd(sourceName).Listeners.Add(listener);
 		}
 
 		public void RemoveListener(string sourceName, TraceListener listener)
 		{
-			GetOrAdd(sourceName, name => CreateSource(name)).Listeners.Remove(listener);
+			GetOrAdd(sourceName).Listeners.Remove(listener);
 		}
 
 		public void RemoveListener(string sourceName, string listenerName)
 		{
-			GetOrAdd(sourceName, name => CreateSource(name)).Listeners.Remove(listenerName);
+			GetOrAdd(sourceName).Listeners.Remove(listenerName);
 		}
 
 		public void SetTracingLevel(string sourceName, SourceLevels level)
 		{
-			GetOrAdd(sourceName, name => CreateSource(name)).Switch.Level = level;
+			GetOrAdd(sourceName).Switch.Level = level;
 		}
 
 		static TraceSource CreateSource(string name)
@@ -108,18 +110,24 @@ namespace System.Diagnostics
 			yield return name;
 		}
 
-		TraceSource GetOrAdd(string sourceName, Func<string, TraceSource> factory)
+		TraceSource GetOrAdd(string sourceName)
 		{
 			if (sourceName == globalSourceName)
 				return globalSource;
 
-			var cachedSource = traceSourceCache
-				.ToArray()
-				.Where(weak => weak.IsAlive)
-				.Select(weak => (TraceSource)weak.Target)
-				.FirstOrDefault(source => source != null && source.Name == sourceName);
+			return traceSources.GetOrAdd(sourceName, name =>
+			{
+				var cachedSource = traceSourceCache
+					.ToArray()
+					.Where(weak => weak.IsAlive)
+					.Select(weak => (TraceSource)weak.Target)
+					.FirstOrDefault(source => source != null && source.Name == name);
 
-			return cachedSource ?? factory(sourceName);
+				if (cachedSource == null)
+					cachedSource = CreateSource(name);
+
+				return cachedSource;
+			});
 		}
 	}
 }
