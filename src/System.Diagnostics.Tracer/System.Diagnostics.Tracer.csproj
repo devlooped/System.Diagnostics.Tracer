@@ -1,56 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Diagnostics</RootNamespace>
-    <AssemblyName>System.Diagnostics.Tracer</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <OutputPath>bin\</OutputPath>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <DefineConstants>TRACE</DefineConstants>
-    <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <PackageId>System.Diagnostics.Tracer</PackageId>
+    <Title>An improved API on top of System.Diagnostics</Title>
+    <Description>
+      An improved API on top of System.Diagnostics.
+      Adds support for dynamic runtime configuration of trace sources, hierarchical trace sources and testability.
+
+      Usage: static readonly ITracer tracer = Tracer.Get&lt;MyClass&gt;();
+    </Description>
+    <PackageTags>tracing logging system.diagnostics</PackageTags>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\System.Diagnostics.Tracer.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="DiagnosticsTracer.cs" />
-    <Compile Include="StartActivityExtension.cs" />
+    <PackageReference Include="IFluentInterface" Version="2.1.0" PrivateAssets="all" />
+    <PackageReference Include="NuGetizer" Version="0.9.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="project.json" />
+    <InternalsVisibleTo Include="System.Diagnostics.Tracer.Tests" />
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Compile Remove="DiagnosticsTracer.Desktop.cs" />
   </ItemGroup>
-  <Import Project="..\System.Diagnostics.Tracer.Shared\System.Diagnostics.Tracer.Shared.projitems" Label="Shared" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- The README.md file won't exist if we're inside the /src folder inside the nuget package itself. -->
-  <Target Name="AfterBuild" Inputs="..\..\README.md" Outputs="$(OutputPath)readme.txt" Condition=" Exists('..\..\README.md') ">
-    <Copy SourceFiles="..\..\README.md" DestinationFiles="$(OutputPath)readme.txt" />
-    <ItemGroup>
-      <FileWrites Include="$(OutputPath)readme.txt" />
-    </ItemGroup>
-  </Target>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Compile Remove="DiagnosticsTracer.cs" />
+    <Compile Include="DiagnosticsTracer.Desktop.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\readme.md" Link="readme.md" />
+  </ItemGroup>
+
 </Project>
