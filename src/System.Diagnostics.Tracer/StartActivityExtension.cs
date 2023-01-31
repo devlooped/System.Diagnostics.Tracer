@@ -1,25 +1,20 @@
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Diagnostics
 {
 	/// <summary>
 	/// Extensions to <see cref="ITracer"/> for activity tracing.
 	/// </summary>
-	/// <remarks>
-	/// Under netstandard, there is no activity tracing since all the TraceEventType 
-	/// values are missing. API provided for compatibility.
-	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class StartActivityExtension
 	{
-		static readonly IDisposable disposable = new NullDisposable();
-
 		/// <summary>
 		/// Starts a new activity scope.
 		/// </summary>
 		public static IDisposable StartActivity(this ITracer tracer, string format, params object[] args)
 		{
-			return disposable;
+			return new TraceActivity(tracer, format, args);
 		}
 
 		/// <summary>
@@ -27,13 +22,55 @@ namespace System.Diagnostics
 		/// </summary>
 		public static IDisposable StartActivity(this ITracer tracer, string displayName)
 		{
-			return disposable;
+			return new TraceActivity(tracer, displayName);
 		}
 
-		class NullDisposable : IDisposable
+		/// <devdoc>
+		/// In order for activity tracing to happen, the trace source needs to
+		/// have <see cref="SourceLevels.ActivityTracing"/> enabled.
+		/// </devdoc>
+		class TraceActivity : IDisposable
 		{
+			string displayName;
+			bool disposed;
+			ITracer tracer;
+			Guid oldId;
+			Guid newId;
+
+			public TraceActivity(ITracer tracer, string displayName)
+				: this(tracer, displayName, null)
+			{
+			}
+
+			public TraceActivity(ITracer tracer, string displayName, params object[] args)
+			{
+				this.tracer = tracer;
+				this.displayName = displayName;
+				if (args != null && args.Length > 0)
+					this.displayName = string.Format(displayName, args, CultureInfo.CurrentCulture);
+
+				newId = Guid.NewGuid();
+				oldId = Trace.CorrelationManager.ActivityId;
+
+				if (oldId != Guid.Empty)
+					tracer.Trace(TraceEventType.Transfer, newId);
+
+				Trace.CorrelationManager.ActivityId = newId;
+				tracer.Trace(TraceEventType.Start, this.displayName);
+			}
+
 			public void Dispose()
 			{
+				if (!disposed)
+				{
+					tracer.Trace(TraceEventType.Stop, displayName);
+					if (oldId != Guid.Empty)
+						tracer.Trace(TraceEventType.Transfer, oldId);
+
+					Trace.CorrelationManager.ActivityId = oldId;
+				}
+
+				disposed = true;
 			}
 		}
 	}

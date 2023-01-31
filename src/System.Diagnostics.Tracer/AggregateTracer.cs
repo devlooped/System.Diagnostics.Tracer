@@ -9,8 +9,8 @@ namespace System.Diagnostics
 	/// </summary>
 	class AggregateTracer : ITracer
 	{
-		private List<DiagnosticsTracer> tracers;
-		private string name;
+		readonly List<DiagnosticsTracer> tracers;
+		readonly string name;
 
 		public AggregateTracer(string name, IEnumerable<DiagnosticsTracer> tracers)
 		{

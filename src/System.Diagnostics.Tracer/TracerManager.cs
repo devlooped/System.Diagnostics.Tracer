@@ -13,8 +13,8 @@ namespace System.Diagnostics
 		// If we can grab this from reflection from the TraceSource, we do it,
 		// and it means we can also manipulate the configuration for built-in
 		// sources instantiated natively by the BCLs throughout .NET :).
-		static List<WeakReference> traceSourceCache = new List<WeakReference>();
-		static ConcurrentDictionary<string, TraceSource> traceSources = new ConcurrentDictionary<string, TraceSource>();
+		static readonly List<WeakReference> traceSourceCache = new List<WeakReference>();
+		static readonly ConcurrentDictionary<string, TraceSource> traceSources = new ConcurrentDictionary<string, TraceSource>();
 
 		public string GlobalSourceName { get { return globalSourceName; } }
 

@@ -25,11 +25,10 @@ namespace System.Diagnostics
 		// log as if the original source name was the one logging, so as not to lose the
 		// originating class name.
 		static readonly FieldInfo sourceNameField = typeof(TraceSource).GetTypeInfo().GetDeclaredField("sourceName");
+        readonly TraceSource source;
+        readonly string originalName;
 
-		TraceSource source;
-		string originalName;
-
-		static Action<TraceSource, string> replacer;
+		static readonly Action<TraceSource, string> replacer;
 
 		static SourceNameReplacer()
 		{

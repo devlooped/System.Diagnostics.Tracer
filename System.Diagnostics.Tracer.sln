@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Diagnostics.Tracer", "src\System.Diagnostics.Tracer\System.Diagnostics.Tracer.csproj", "{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F2D3CC0C-76E7-45D5-B289-4557291C061C}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.props = src\Directory.props
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Diagnostics.Tracer.Tests", "src\System.Diagnostics.Tracer.Tests\System.Diagnostics.Tracer.Tests.csproj", "{BA4E287F-B371-4036-8FCC-29D8632E2FE1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4BEDB9-5257-4D26-BDBD-78FC8824EE22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA4E287F-B371-4036-8FCC-29D8632E2FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA4E287F-B371-4036-8FCC-29D8632E2FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA4E287F-B371-4036-8FCC-29D8632E2FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA4E287F-B371-4036-8FCC-29D8632E2FE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6725B35A-CD1C-480C-BB00-7A15BB417F6A}
+	EndGlobalSection
+EndGlobal

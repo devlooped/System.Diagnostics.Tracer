@@ -4,13 +4,7 @@ An improved API on top of System.Diagnostics
 
 Adds support for dynamic runtime configuration of trace sources, hierarchical trace sources and testability.
 
-## How
-
-### Install
-
-    PM> Install-Package System.Diagnostics.Tracer
-
-### Use
+## Usage
 Just like for `TraceSource`, the recommended way to retrieve a 
 tracer for your code is to do so via a static readonly field:
 
@@ -33,7 +27,7 @@ When exceptions are traced, any additional data in the `Exception.Data`
 dictionary is also exposed to the viewer. 
 
 
-## Configure
+## Configuration
 
 One of the key benefits of leveraging the `Tracer` is that configuration 
 can happen dynamically at run-time, via the `Tracer.Configuration`, such 

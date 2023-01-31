@@ -88,7 +88,7 @@ namespace System.Diagnostics
 
 		class TracerManagerReplacer : IDisposable
 		{
-			ITracerManager original;
+            readonly ITracerManager original;
 
 			public TracerManagerReplacer(ITracerManager manager)
 			{
