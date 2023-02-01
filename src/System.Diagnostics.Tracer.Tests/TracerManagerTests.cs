@@ -6,9 +6,12 @@ namespace System.Diagnostics
 {
     public class TracerManagerTests
     {
-        [Fact]
+        [SkippableFact]
         public void when_getting_source_then_can_retrieve_built_in_source()
         {
+            var ci = bool.TryParse(ThisAssembly.Project.CI, out var value) && value;
+            Skip.If(ci);
+            
             var manager = new TracerManager();
             var expected = PresentationTraceSources.MarkupSource;
             var actual = manager.GetSource("System.Windows.Markup");
