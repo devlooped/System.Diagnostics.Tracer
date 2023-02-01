@@ -11,7 +11,7 @@ namespace System.Diagnostics
         {
             var ci = bool.TryParse(ThisAssembly.Project.CI, out var value) && value;
             Skip.If(ci);
-            
+
             var manager = new TracerManager();
             var expected = PresentationTraceSources.MarkupSource;
             var actual = manager.GetSource("System.Windows.Markup");
