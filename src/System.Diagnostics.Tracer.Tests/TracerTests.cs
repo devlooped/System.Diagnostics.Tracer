@@ -37,9 +37,9 @@ namespace System.Diagnostics
             var inMemoryListener = new InMemoryTraceListener();
             var xmlListener = new XmlWriterTraceListener(xml);
 
-			var tracerName = MethodBase.GetCurrentMethod().Name;
+            var tracerName = MethodBase.GetCurrentMethod().Name;
 
-			Tracer.Configuration.AddListener(tracerName, inMemoryListener);
+            Tracer.Configuration.AddListener(tracerName, inMemoryListener);
             Tracer.Configuration.AddListener(tracerName, xmlListener);
             Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
 
@@ -73,77 +73,77 @@ namespace System.Diagnostics
             Assert.Contains("A Foo Exception occurred", trace);
         }
 
-		[Fact]
-		public void when_tracing_exception_without_args_and_message_with_brackets_then_success()
-		{
-			var inMemoryListener = new InMemoryTraceListener();
+        [Fact]
+        public void when_tracing_exception_without_args_and_message_with_brackets_then_success()
+        {
+            var inMemoryListener = new InMemoryTraceListener();
 
-			Tracer.Configuration.AddListener("Foo", inMemoryListener);
-			Tracer.Configuration.SetTracingLevel("Foo", SourceLevels.All);
+            Tracer.Configuration.AddListener("Foo", inMemoryListener);
+            Tracer.Configuration.SetTracingLevel("Foo", SourceLevels.All);
 
-			var tracer = Tracer.Get("Foo");
+            var tracer = Tracer.Get("Foo");
 
-			var message = "A Foo Exception occurred {1223445}";
-			tracer.Error(new ApplicationException("Foo Error"), message);
+            var message = "A Foo Exception occurred {1223445}";
+            tracer.Error(new ApplicationException("Foo Error"), message);
 
-			var trace = inMemoryListener.GetTrace();
+            var trace = inMemoryListener.GetTrace();
 
-			Assert.False(string.IsNullOrEmpty(trace));
-			Assert.Contains("Foo Error", trace);
-			Assert.Contains(message, trace);
-		}
+            Assert.False(string.IsNullOrEmpty(trace));
+            Assert.Contains("Foo Error", trace);
+            Assert.Contains(message, trace);
+        }
 
 
-		[Fact]
-		public void when_tracing_without_args_then_success()
-		{
-			var xml = Path.GetTempFileName();
-			var inMemoryListener = new InMemoryTraceListener();
-			var xmlListener = new XmlWriterTraceListener(xml);
+        [Fact]
+        public void when_tracing_without_args_then_success()
+        {
+            var xml = Path.GetTempFileName();
+            var inMemoryListener = new InMemoryTraceListener();
+            var xmlListener = new XmlWriterTraceListener(xml);
 
-			var tracerName = MethodBase.GetCurrentMethod().Name;
+            var tracerName = MethodBase.GetCurrentMethod().Name;
 
-			Tracer.Configuration.AddListener(tracerName, inMemoryListener);
-			Tracer.Configuration.AddListener(tracerName, xmlListener);
-			Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
+            Tracer.Configuration.AddListener(tracerName, inMemoryListener);
+            Tracer.Configuration.AddListener(tracerName, xmlListener);
+            Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
 
-			var tracer = Tracer.Get(tracerName);
+            var tracer = Tracer.Get(tracerName);
 
-			var message = "Foo";
+            var message = "Foo";
 
-			tracer.Info(message);
+            tracer.Info(message);
 
-			var trace = inMemoryListener.GetTrace();
+            var trace = inMemoryListener.GetTrace();
 
-			Assert.False(string.IsNullOrEmpty(trace));
-			Assert.Contains(message, trace);
-		}
+            Assert.False(string.IsNullOrEmpty(trace));
+            Assert.Contains(message, trace);
+        }
 
-		[Fact]
-		public void when_tracing_without_args_and_message_with_brackets_then_success()
-		{
-			var xml = Path.GetTempFileName();
-			var inMemoryListener = new InMemoryTraceListener();
-			var xmlListener = new XmlWriterTraceListener(xml);
+        [Fact]
+        public void when_tracing_without_args_and_message_with_brackets_then_success()
+        {
+            var xml = Path.GetTempFileName();
+            var inMemoryListener = new InMemoryTraceListener();
+            var xmlListener = new XmlWriterTraceListener(xml);
 
-			var tracerName = MethodBase.GetCurrentMethod().Name;
+            var tracerName = MethodBase.GetCurrentMethod().Name;
 
-			Tracer.Configuration.AddListener(tracerName, inMemoryListener);
-			Tracer.Configuration.AddListener(tracerName, xmlListener);
-			Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
+            Tracer.Configuration.AddListener(tracerName, inMemoryListener);
+            Tracer.Configuration.AddListener(tracerName, xmlListener);
+            Tracer.Configuration.SetTracingLevel(tracerName, SourceLevels.All);
 
-			var tracer = Tracer.Get(tracerName);
+            var tracer = Tracer.Get(tracerName);
 
-			var message = "Foo: {1234567890}";
+            var message = "Foo: {1234567890}";
 
-			tracer.Info(message);
+            tracer.Info(message);
 
-			var trace = inMemoryListener.GetTrace();
+            var trace = inMemoryListener.GetTrace();
 
-			Assert.False(string.IsNullOrEmpty(trace));
-			Assert.Contains(message, trace);
-		}
-	}
+            Assert.False(string.IsNullOrEmpty(trace));
+            Assert.Contains(message, trace);
+        }
+    }
 
     class InMemoryTraceListener : TraceListener
     {

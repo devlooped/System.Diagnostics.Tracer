@@ -5,129 +5,129 @@ using System.Reflection;
 
 namespace System.Diagnostics
 {
-	class TracerManager : ITracerManager, ITracerConfiguration
-	{
-		const string globalSourceName = "*";
-		static readonly TraceSource globalSource;
+    class TracerManager : ITracerManager, ITracerConfiguration
+    {
+        const string globalSourceName = "*";
+        static readonly TraceSource globalSource;
 
-		// If we can grab this from reflection from the TraceSource, we do it,
-		// and it means we can also manipulate the configuration for built-in
-		// sources instantiated natively by the BCLs throughout .NET :).
-		static readonly List<WeakReference> traceSourceCache = new List<WeakReference>();
-		static readonly ConcurrentDictionary<string, TraceSource> traceSources = new ConcurrentDictionary<string, TraceSource>();
+        // If we can grab this from reflection from the TraceSource, we do it,
+        // and it means we can also manipulate the configuration for built-in
+        // sources instantiated natively by the BCLs throughout .NET :).
+        static readonly List<WeakReference> traceSourceCache = new List<WeakReference>();
+        static readonly ConcurrentDictionary<string, TraceSource> traceSources = new ConcurrentDictionary<string, TraceSource>();
 
-		public string GlobalSourceName { get { return globalSourceName; } }
+        public string GlobalSourceName { get { return globalSourceName; } }
 
-		static TracerManager()
-		{
-			var cacheField = typeof(TraceSource).GetTypeInfo().GetDeclaredField("tracesources");
-			if (cacheField != null)
-			{
-				try
-				{
-					traceSourceCache = (List<WeakReference>)cacheField.GetValue(null);
-				}
-				catch { }
-			}
+        static TracerManager()
+        {
+            var cacheField = typeof(TraceSource).GetTypeInfo().GetDeclaredField("tracesources");
+            if (cacheField != null)
+            {
+                try
+                {
+                    traceSourceCache = (List<WeakReference>)cacheField.GetValue(null);
+                }
+                catch { }
+            }
 
-			globalSource = CreateSource(globalSourceName);
-		}
+            globalSource = CreateSource(globalSourceName);
+        }
 
-		public ITracer Get(string name)
-		{
-			return new AggregateTracer(name, CompositeFor(name)
-				.Select(tracerName => new DiagnosticsTracer(
-					GetOrAdd(tracerName))));
-		}
+        public ITracer Get(string name)
+        {
+            return new AggregateTracer(name, CompositeFor(name)
+                .Select(tracerName => new DiagnosticsTracer(
+                    GetOrAdd(tracerName))));
+        }
 
-		public TraceSource GetSource(string name)
-		{
-			return GetOrAdd(name);
-		}
+        public TraceSource GetSource(string name)
+        {
+            return GetOrAdd(name);
+        }
 
-		public void AddListener(string sourceName, TraceListener listener)
-		{
-			GetOrAdd(sourceName).Listeners.Add(listener);
-		}
+        public void AddListener(string sourceName, TraceListener listener)
+        {
+            GetOrAdd(sourceName).Listeners.Add(listener);
+        }
 
-		public void RemoveListener(string sourceName, TraceListener listener)
-		{
-			GetOrAdd(sourceName).Listeners.Remove(listener);
-		}
+        public void RemoveListener(string sourceName, TraceListener listener)
+        {
+            GetOrAdd(sourceName).Listeners.Remove(listener);
+        }
 
-		public void RemoveListener(string sourceName, string listenerName)
-		{
-			GetOrAdd(sourceName).Listeners.Remove(listenerName);
-		}
+        public void RemoveListener(string sourceName, string listenerName)
+        {
+            GetOrAdd(sourceName).Listeners.Remove(listenerName);
+        }
 
-		public void SetTracingLevel(string sourceName, SourceLevels level)
-		{
-			GetOrAdd(sourceName).Switch.Level = level;
-		}
+        public void SetTracingLevel(string sourceName, SourceLevels level)
+        {
+            GetOrAdd(sourceName).Switch.Level = level;
+        }
 
-		static TraceSource CreateSource(string name)
-		{
-			var source = new TraceSource(name);
-			// The source.Listeners.Count call causes the tracer to be initialized from config at this point.
-			source.TraceInformation("Initialized trace source {0} with initial level {1} and {2} initial listeners.", name, source.Switch.Level, source.Listeners.Count);
-			
-			return source;
-		}
+        static TraceSource CreateSource(string name)
+        {
+            var source = new TraceSource(name);
+            // The source.Listeners.Count call causes the tracer to be initialized from config at this point.
+            source.TraceInformation("Initialized trace source {0} with initial level {1} and {2} initial listeners.", name, source.Switch.Level, source.Listeners.Count);
 
-		/// <summary>
-		/// Gets the list of trace source names that are used to inherit trace source logging for the given <paramref name="name"/>.
-		/// </summary>
-		static IEnumerable<string> CompositeFor(string name)
-		{
-			if (name != globalSourceName)
-				yield return globalSourceName;
+            return source;
+        }
 
-			var indexOfGeneric = name.IndexOf('<');
-			var indexOfLastDot = name.LastIndexOf('.');
+        /// <summary>
+        /// Gets the list of trace source names that are used to inherit trace source logging for the given <paramref name="name"/>.
+        /// </summary>
+        static IEnumerable<string> CompositeFor(string name)
+        {
+            if (name != globalSourceName)
+                yield return globalSourceName;
 
-			if (indexOfGeneric == -1 && indexOfLastDot == -1)
-			{
-				yield return name;
-				yield break;
-			}
+            var indexOfGeneric = name.IndexOf('<');
+            var indexOfLastDot = name.LastIndexOf('.');
 
-			var parts = default(string[]);
+            if (indexOfGeneric == -1 && indexOfLastDot == -1)
+            {
+                yield return name;
+                yield break;
+            }
 
-			if (indexOfGeneric == -1)
-				parts = name
-					.Substring(0, name.LastIndexOf('.'))
-					.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-			else
-				parts = name
-					.Substring(0, indexOfGeneric)
-					.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = default(string[]);
 
-			for (int i = 1; i <= parts.Length; i++)
-			{
-				yield return string.Join(".", parts, 0, i);
-			}
+            if (indexOfGeneric == -1)
+                parts = name
+                    .Substring(0, name.LastIndexOf('.'))
+                    .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            else
+                parts = name
+                    .Substring(0, indexOfGeneric)
+                    .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
-			yield return name;
-		}
+            for (int i = 1; i <= parts.Length; i++)
+            {
+                yield return string.Join(".", parts, 0, i);
+            }
 
-		TraceSource GetOrAdd(string sourceName)
-		{
-			if (sourceName == globalSourceName)
-				return globalSource;
+            yield return name;
+        }
 
-			return traceSources.GetOrAdd(sourceName, name =>
-			{
-				var cachedSource = traceSourceCache
-					.ToArray()
-					.Where(weak => weak.IsAlive)
-					.Select(weak => (TraceSource)weak.Target)
-					.FirstOrDefault(source => source != null && source.Name == name);
+        TraceSource GetOrAdd(string sourceName)
+        {
+            if (sourceName == globalSourceName)
+                return globalSource;
 
-				if (cachedSource == null)
-					cachedSource = CreateSource(name);
+            return traceSources.GetOrAdd(sourceName, name =>
+            {
+                var cachedSource = traceSourceCache
+                    .ToArray()
+                    .Where(weak => weak.IsAlive)
+                    .Select(weak => (TraceSource)weak.Target)
+                    .FirstOrDefault(source => source != null && source.Name == name);
 
-				return cachedSource;
-			});
-		}
-	}
+                if (cachedSource == null)
+                    cachedSource = CreateSource(name);
+
+                return cachedSource;
+            });
+        }
+    }
 }

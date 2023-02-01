@@ -42,10 +42,10 @@ namespace System.Diagnostics
             {
                 using (new SourceNameReplacer(source, sourceName))
                 {
-					if (args != null && args.Length > 0)
-						source.TraceEvent(type, 0, format, args);
-					else
-						source.TraceEvent(type, 0, format);
+                    if (args != null && args.Length > 0)
+                        source.TraceEvent(type, 0, format, args);
+                    else
+                        source.TraceEvent(type, 0, format);
                 }
             }
         }
